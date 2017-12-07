@@ -8,4 +8,4 @@ username VARCHAR(20) NOT NULL, password TEXT, admin TINYINT DEFAULT 0, phone_num
 first_name VARCHAR(30) NOT NULL, middle_name VARCHAR(30) NOT NULL, last_name
 VARCHAR(30) NOT NULL);
 CREATE TABLE orders (id INT(7) PRIMARY KEY AUTO_INCREMENT, user_id INT(7),
-items VARCHAR(10), status INT(1));
+items VARCHAR(10), total_price INT(7) NOT NULL, status INT(1) DEFAULT 0);

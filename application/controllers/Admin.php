@@ -198,7 +198,12 @@ class Admin extends CI_Controller {
     }
   }
   function showOrders() {
-    
+    $data = array();
+    $data["selected"] = 1;
+    $data["title"] = "Orders";
+    $data["menu"] = array();
+    $data["message"] = "";
+    $this->load->view("admin_header", $data);
   }
 }
 ?>

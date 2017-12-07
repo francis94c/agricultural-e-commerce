@@ -21,7 +21,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   </div>
   <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
     <a href="<?=site_url("admin")?>" style="text-decoration:none;" class="w3-bar-item <?=$selected == 0 ? "w3-gray" : "";?> w3-button">Stocks</a>
-    <a href="<?=site_url("admin/showOrders");?> style="text-decoration:none;" class="w3-bar-item <?=$selected == 1 ? "w3-gray" : "";?> w3-button">Orders</a>
+    <a href="<?=site_url("admin/showOrders");?>" style="text-decoration:none;" class="w3-bar-item <?=$selected == 1 ? "w3-gray" : "";?> w3-button">Orders</a>
   </div>
   <a href="#footer" class="w3-bar-item w3-button w3-padding">Contact</a>
 </nav>
