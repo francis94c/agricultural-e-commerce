@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS Template</title>
+<title>FUTO Farms</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="<?=base_url("css/w3.css");?>">
@@ -22,7 +22,11 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
     <?php
     $c = count($menu);
     for ($x = 0; $x <$c; $x++) {
-      echo "<a href=\"#\" class=\"w3-bar-item w3-button\">" . $menu[$x]["name"] . "</a>";
+      if ($selected == $x) {
+        echo "<a href=\"#\" class=\"w3-bar-item w3-gray w3-button\">" . $menu[$x]["name"] . "</a>";
+      } else {
+        echo "<a href=\"#\" class=\"w3-bar-item w3-button\">" . $menu[$x]["name"] . "</a>";
+      }
     }
     ?>
 
@@ -47,12 +51,12 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
   <!-- Top header -->
   <header class="w3-container w3-xlarge">
-    <p class="w3-left">Jeans</p>
+    <p class="w3-left"><?=$title?></p>
     <p class="w3-right">
       <i class="fa fa-shopping-cart w3-margin-right"></i>
       <i class="fa fa-search"></i>
     </p>
   </header>
   <div class="w3-container w3-text-grey" id="jeans">
-    <p>8 items</p>
+    <p><?=$items?> items</p>
   </div>

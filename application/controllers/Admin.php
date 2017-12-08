@@ -29,6 +29,7 @@ class Admin extends CI_Controller {
             $stock["price"] = $stocks[$x]["unit_price"];
             $stock["id"] = $stocks[$x]["id"];
             $stock["quantity"] = $stocks[$x]["quantity"];
+            $stock["is_admin"] = true;
             $this->load->view("product_array", $stock);
           } else {
             $this->load->view("product_grid_footer");
