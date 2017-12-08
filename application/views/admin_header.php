@@ -27,8 +27,8 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
-  <div class="w3-bar-item w3-padding-24 w3-wide">FUTO FARMS</div>
+<header class="w3-bar w3-top w3-green w3-hide-large w3-xlarge">
+  <div class="w3-bar-item w3-green w3-padding-24 w3-wide">FUTO FARMS</div>
   <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></a>
 </header>
 

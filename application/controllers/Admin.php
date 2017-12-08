@@ -15,6 +15,7 @@ class Admin extends CI_Controller {
     $data["menu"] = $menu;
     $data["title"] = "Stocks";
     $data["selected"] = 0;
+    $data["message"] = "";
     $this->load->view("admin_header", $data);
     $pages = ceil(count($stocks) / 8);
     $page = 1;
@@ -38,7 +39,6 @@ class Admin extends CI_Controller {
         }
         $lastIndex += 8;
         ++$page;
-        $this->load->view("product_grid_footer");
     }
     $this->load->view("footer");
   }
