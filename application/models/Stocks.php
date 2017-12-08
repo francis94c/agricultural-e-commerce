@@ -23,7 +23,7 @@ class Stocks extends CI_Model {
     "category"=>$category, "image"=>$image, "unit_price"=>$unitPrice));
   }
   function calculateTotalPrice($itemId, $quantity) {
-    $unitPrice = $this->db->get_where($item, array("id"=>$itemId))[0];
+    $unitPrice = $this->db->get_where("stocks", array("id"=>$itemId))->result_array()[0]["unit_price"];
     return $unitPrice * $quantity;
   }
 }

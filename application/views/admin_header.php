@@ -28,7 +28,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
 <!-- Top menu on small screens -->
 <header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
-  <div class="w3-bar-item w3-padding-24 w3-wide">LOGO</div>
+  <div class="w3-bar-item w3-padding-24 w3-wide">FUTO FARMS</div>
   <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></a>
 </header>
 
@@ -45,7 +45,6 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   <header class="w3-container w3-xlarge">
     <p class="w3-left"><?=$title?></p>
     <p class="w3-right">
-      <i class="fa fa-shopping-cart w3-margin-right"></i>
       <i class="fa fa-search"></i>
     </p>
   </header>
@@ -54,12 +53,13 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
         <?php
         $menu_item = count($menu);
         for($x=0 ; $x<$menu_item; $x++){
-           echo '<a href="' . $menu[$x][1] . '" class="w3-bar-item w3-button w3-hover-green">' .
+           echo '<a href="' . $menu[$x][1] . '" style="text-decoration:none;" class="w3-bar-item w3-button w3-hover-green">' .
            $menu[$x][0] . '</a>';
         }
         ?>
     </div>
   </header>
+  <p class="w3-margin"><?=$message?></p>
   <div class="w3-container w3-text-grey" id="jeans">
     <?php if (isset($items)) {?>
       <p><?php echo $items;?> items</p>

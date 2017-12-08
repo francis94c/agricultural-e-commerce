@@ -28,6 +28,7 @@ class Admin extends CI_Controller {
             $stock["name"] = $stocks[$x]["name"];
             $stock["price"] = $stocks[$x]["unit_price"];
             $stock["id"] = $stocks[$x]["id"];
+            $stock["quantity"] = $stocks[$x]["quantity"];
             $this->load->view("product_array", $stock);
           } else {
             $this->load->view("product_grid_footer");
@@ -38,6 +39,7 @@ class Admin extends CI_Controller {
         ++$page;
         $this->load->view("product_grid_footer");
     }
+    $this->load->view("footer");
   }
   function isValidated() {
     return $this->session->userdata('validated');
@@ -64,6 +66,7 @@ class Admin extends CI_Controller {
     $this->load->view("admin_header", $data);
     $this->load->helper("form");
     $this->load->view("stock_form", $data);
+    $this->load->view("footer");
   }
   function editStock() {
     $name = $this->security->xss_clean($this->input->post('name'));
@@ -131,6 +134,7 @@ class Admin extends CI_Controller {
     $this->load->view("admin_header", $data);
     $this->load->helper("form");
     $this->load->view("stock_form", $data);
+    $this->load->view("footer");
   }
   function addStock() {
     $name = $this->security->xss_clean($this->input->post('name'));
@@ -196,6 +200,7 @@ class Admin extends CI_Controller {
       $this->load->helper("form");
       $this->load->view("stock_form", $data);
     }
+    $this->load->view("footer");
   }
   function showOrders() {
     $data = array();
@@ -204,6 +209,155 @@ class Admin extends CI_Controller {
     $data["menu"] = array();
     $data["message"] = "";
     $this->load->view("admin_header", $data);
+    $this->load->view("table_start");
+    $this->load->view("orders_header");
+    $this->load->model("orders");
+    $this->load->model("users");
+    $orders = $this->orders->getOrders();
+    for ($x = 0; $x < count($orders); $x++) {
+      $data = array();
+      $data["name"] = $this->users->getUserFullName($orders[$x]["user_id"]);
+      $data["items_count"] = $this->orders->getTotalItemCountByFileName($orders[$x]["items"]);
+      $data["total_price"] = $orders[$x]["total_price"];
+      $data["id"] = $orders[$x]["id"];
+      $data["status"] = $this->orders->statusToString($orders[$x]["status"]);
+      $this->load->view("order_item", $data);
+    }
+    $this->load->view("table_end");
+    $this->load->view("footer");
+  }
+  function showOrdersWithMessage($message) {
+    $data = array();
+    $data["selected"] = 1;
+    $data["title"] = "Orders";
+    $data["menu"] = array();
+    $data["message"] = $message;
+    $this->load->view("admin_header", $data);
+    $this->load->view("table_start");
+    $this->load->view("orders_header");
+    $this->load->model("orders");
+    $this->load->model("users");
+    $orders = $this->orders->getOrders();
+    for ($x = 0; $x < count($orders); $x++) {
+      $data = array();
+      $data["name"] = $this->users->getUserFullName($orders[$x]["user_id"]);
+      $data["items_count"] = $this->orders->getTotalItemCountByFileName($orders[$x]["items"]);
+      $data["total_price"] = $orders[$x]["total_price"];
+      $data["id"] = $orders[$x]["id"];
+      $data["status"] = $this->orders->statusToString($orders[$x]["status"]);
+      $this->load->view("order_item", $data);
+    }
+    $this->load->view("table_end");
+    $this->load->view("footer");
+  }
+  function viewOrder() {
+    $this->load->model("orders");
+    $id = $this->uri->segment(3);
+    $order = $this->orders->getOrder($id);
+    $data = array();
+    $data["selected"] = 1;
+    $data["title"] = "Order -> " . $this->orders->getCustomerFullName($id);
+    $data["menu"] = array(
+      array("Mark as Processed", site_url("admin/markAsProcessed/$id")),
+      array("Mark As Paid", site_url("admin/MarkAsPaid/$id")),
+      array("Delete", site_url("admin/deleteOrder/$id")));
+    $data["message"] = "";
+    $this->load->view("admin_header", $data);
+    $this->load->view("table_start");
+    $this->load->view("order_header");
+    $orderObject = $this->orders->getOrderObject($order["items"]);
+    $this->load->model("stocks");
+    for ($x = 0; $x < count($orderObject); $x++) {
+      $data = array();
+      $stock = $this->stocks->getStock($orderObject[$x]["id"]);
+      $data["name"] = $stock["name"];
+      $data["quantity"] = $orderObject[$x]["quantity"];
+      $data["unit_price"] = $orderObject[$x]["unit_price"];
+      $data["total_price"] = $data["unit_price"] * $orderObject[$x]["quantity"];
+      $this->load->view("specific_order_item", $data);
+    }
+    $data = array();
+    $data["name"] = "Total";
+    $data["quantity"] = "";
+    $data["unit_price"] = "";
+    $data["total_price"] = $order["total_price"];
+    $this->load->view("specific_order_item", $data);
+    $this->load->view("table_end");
+    $data = array();
+    $data["text1"] = "Shipping Address:";
+    $data["text2"] = $order["shipping_address"];
+    $this->load->view("panel", $data);
+    $data["text1"] = "Additional Message:";
+    $data["text2"] = $order["additional_message"];
+    $this->load->view("panel", $data);
+    $this->load->view("footer");
+  }
+  function viewOrderWithMessage($id, $message) {
+    $this->load->model("orders");
+    $order = $this->orders->getOrder($id);
+    $data = array();
+    $data["selected"] = 1;
+    $data["title"] = "Order -> " . $this->orders->getCustomerFullName($id);
+    $data["menu"] = array(
+      array("Mark as Processed", site_url("admin/markAsProcessed/$id")),
+      array("Mark As Paid", site_url("admin/MarkAsPaid/$id")),
+      array("Delete", site_url("admin/deleteOrder/$id")));
+    $data["message"] = $message;
+    $this->load->view("admin_header", $data);
+    $this->load->view("table_start");
+    $this->load->view("order_header");
+    $orderObject = $this->orders->getOrderObject($order["items"]);
+    $this->load->model("stocks");
+    for ($x = 0; $x < count($orderObject); $x++) {
+      $data = array();
+      $stock = $this->stocks->getStock($orderObject[$x]["id"]);
+      $data["name"] = $stock["name"];
+      $data["quantity"] = $orderObject[$x]["quantity"];
+      $data["unit_price"] = $orderObject[$x]["unit_price"];
+      $data["total_price"] = $data["unit_price"] * $orderObject[$x]["quantity"];
+      $this->load->view("specific_order_item", $data);
+    }
+    $data = array();
+    $data["name"] = "Total";
+    $data["quantity"] = "";
+    $data["unit_price"] = "";
+    $data["total_price"] = $order["total_price"];
+    $this->load->view("specific_order_item", $data);
+    $this->load->view("table_end");
+    $data = array();
+    $data["text1"] = "Shipping Address:";
+    $data["text2"] = $order["shipping_address"];
+    $this->load->view("panel", $data);
+    $data["text1"] = "Additional Message:";
+    $data["text2"] = $order["additional_message"];
+    $this->load->view("panel", $data);
+    $this->load->view("footer");
+  }
+  function deleteOrder() {
+    $this->load->model("orders");
+    if ($this->orders->deleteOrder($this->uri->segment(3))) {
+      $this->showOrdersWithMessage("<font color=\"green\">Order has been Deleted.</font>");
+    } else {
+      $this->showOrdersWithMessage("<font color=\"red\">Error Deleting Order</font>");
+    }
+  }
+  function markAsProcessed() {
+    $id = $this->uri->segment(3);
+    $this->load->model("orders");
+    if ($this->orders->markOrderAsProcessed($id)) {
+      $this->viewOrderWithMessage($id, "<font color=\"green\">Order has been Marked as Processed.</font>");
+    } else {
+      $this->viewOrderWithMessage($id, "<font color=\"red\">There was a problem marking the Order.</font>");
+    }
+  }
+  function markAsPaid() {
+    $id = $this->uri->segment(3);
+    $this->load->model("orders");
+    if ($this->orders->markOrderAsPaid($id)) {
+      $this->viewOrderWithMessage($id, "<font color=\"green\">Order has been Marked as Paid.</font>");
+    } else {
+      $this->viewOrderWithMessage($id, "<font color=\"red\">There was a problem marking the Order.</font>");
+    }
   }
 }
 ?>

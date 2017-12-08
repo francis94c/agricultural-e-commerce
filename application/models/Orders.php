@@ -14,6 +14,21 @@ class Orders extends CI_Model {
     return $this->db->get("orders")->result_array();
   }
   /**
+   * [statusToString description]
+   * @param  [type] $code [description]
+   * @return [type]       [description]
+   */
+  function statusToString($code) {
+    switch ($code) {
+      case 0:
+        return "<font color=\"gray\">Unprocessed</font>";
+      case 1:
+        return "<font color=\"#789669\">Paid</font>";
+      case 2:
+        return "<font color=\"green\">Processed</font>";
+    }
+  }
+  /**
    * [markOrderAsProcessed description]
    * @param  [type] $id [description]
    * @return [type]     [description]
@@ -81,6 +96,34 @@ class Orders extends CI_Model {
   function deleteOrder($id) {
     $this->db->where("id", $id);
     return $this->db->delete("orders");
+  }
+  function getTotalItemCountById($id) {
+    $fileName = $this->db->get_where("orders", array("id"=>$id))->result_array()[0]["items"];
+    $this->load->helper("file");
+    $orders = json_decode(read_file(FCPATH . "orders/" . $fileName), true);
+    $count = 0;
+    for ($x = 0; $x < count($orders); $x++) {
+      $count += $orders[$x]["quantity"];
+    }
+    return $count;
+  }
+  function getOrderObject($fileName) {
+    $this->load->helper("file");
+    return json_decode(read_file(FCPATH . "orders/" . $fileName), true);
+  }
+  function getTotalItemCountByFileName($fileName) {
+    $this->load->helper("file");
+    $orders = json_decode(read_file(FCPATH . "orders/" . $fileName), true);
+    $count = 0;
+    for ($x = 0; $x < count($orders); $x++) {
+      $count += $orders[$x]["quantity"];
+    }
+    return $count;
+  }
+  function getCustomerFullName($id) {
+    $uid = $this->db->get_where("orders", array("id"=>$id))->result_array()[0]["user_id"];
+    $user = $this->db->get_where("users", array("id"=>$id))->result_array()[0];
+    return $user["first_name"] . " " . $user["last_name"] . " " . $user["middle_name"];
   }
 }
 ?>

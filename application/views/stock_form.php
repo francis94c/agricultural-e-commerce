@@ -6,7 +6,7 @@
     <input class="form-control" name="image" type="file" placeholder="Image"/>
   </div>
   <?php if ($params["image"] != "") { ?>
-    <img class="w3-margin" src="<?=base_url("images/" . $params["image"] . ".jpg")?>"/>
+    <img class="w3-margin" width="250" height="250" src="<?=base_url("images/" . $params["image"] . ".jpg")?>"/>
   <?php }?>
   <div class="input-group w3-margin margin-bottom-sm">
     <span class="input-group-addon"><i class="fa fa-user-o fa-fw"></i></span>
