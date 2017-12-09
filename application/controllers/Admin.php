@@ -37,6 +37,9 @@ class Admin extends CI_Controller {
             break;
           }
         }
+        if ($page != $pages) {
+          $this->load->view("product_grid_footer");
+        }
         $lastIndex += 8;
         ++$page;
     }

@@ -26,5 +26,9 @@ class Stocks extends CI_Model {
     $unitPrice = $this->db->get_where("stocks", array("id"=>$itemId))->result_array()[0]["unit_price"];
     return $unitPrice * $quantity;
   }
+  function searchStocks($keyWord) {
+    $this->db->like("name", $keyWord);
+    return $this->db->get("stock")->result_array();
+  }
 }
 ?>

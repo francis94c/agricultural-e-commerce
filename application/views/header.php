@@ -6,10 +6,20 @@
 <link rel="stylesheet" href="<?=base_url("css/w3.css");?>">
 <link rel="stylesheet" href="<?=base_url("css/google-fonts.css");?>">
 <link rel="stylesheet" href="<?=base_url("css/fa/font-awesome.min.css");?>">
+<link rel="stylesheet" href="<?=base_url("css/bootstrap.min.css");?>">
 <style>
 .w3-sidebar a {font-family: "Roboto", sans-serif}
 body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 </style>
+<script type="text/javascript" src="<?=base_url("js/jquery.js");?>"></script>
+<script type="text/javascript">
+function toggleSearch() {
+  $("#searchInput").toggle();
+  if ($("#searchInput").is(":visible")) {
+    $("#actualSeachInput").focus();
+  }
+}
+</script>
 <body class="w3-content" style="max-width:1200px">
 
 <!-- Sidebar/menu -->
@@ -51,12 +61,27 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
   <!-- Top header -->
   <header class="w3-container w3-xlarge">
+    <?php echo form_open("home/searchStocks"); ?>
+    <div id="searchInput" style="display:none;" class="input-group w3-margin margin-bottom-sm">
+      <span class="input-group-addon"><i class="fa fa-camera-o fa-fw"></i></span>
+      <input id="actualSeachInput" class="form-control" name="key-word" type="text" placeholder="Search"/>
+    </div>
+    <?php echo form_close(); ?>
     <p class="w3-left"><?=$title?></p>
     <p class="w3-right">
-      <i class="fa fa-shopping-cart w3-margin-right"></i>
-      <i class="fa fa-search"></i>
+    <?php
+    $ci =& get_instance();
+    if ($ci->session->userdata("cart") == null) {
+    ?>
+      <a class="w3-button" href="#" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"></i></a>
+    <?php } else {?>
+      <a class="w3-button" href="<?=site_url("home/viewCart");?>" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"><span class="w3-badge w3-blue"><?=count($ci->session->userdata("cart"));?></span></i></a>
+    <?php }?>
+      <button onclick="toggleSearch();" class="w3-button"><i class="fa fa-search"></i></button>
     </p>
   </header>
   <div class="w3-container w3-text-grey" id="jeans">
-    <p><?=$items?> items</p>
+    <?php if (isset($items)) {?>
+      <p><?=$items?> items</p>
+    <?php }?>
   </div>
