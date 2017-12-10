@@ -7,11 +7,15 @@
 <link rel="stylesheet" href="<?=base_url("css/google-fonts.css");?>">
 <link rel="stylesheet" href="<?=base_url("css/fa/font-awesome.min.css");?>">
 <link rel="stylesheet" href="<?=base_url("css/bootstrap.min.css");?>">
+<?php if ($title == "Pay (Credit Card)") {?>
+  <link rel="stylesheet" href="<?=base_url("css/metro.min.css");?>">
+<?php }?>
 <style>
 .w3-sidebar a {font-family: "Roboto", sans-serif}
 body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 </style>
 <script type="text/javascript" src="<?=base_url("js/jquery.js");?>"></script>
+<script type="text/javascript" src="<?=base_url("js/metro.min.js");?>"></script>
 <script type="text/javascript">
 function toggleSearch() {
   $("#searchInput").toggle();
@@ -24,10 +28,12 @@ function toggleSearch() {
 
 <!-- Sidebar/menu -->
 <nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px" id="mySidebar">
-  <div class="w3-green w3-container w3-display-container w3-padding-16">
-    <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-    <h3 class="w3-wide"><b>FUTO FARMS</b></h3>
-  </div>
+  <a href="<?=site_url("home");?>" style="text-decoration:none;">
+    <div class="w3-green w3-container w3-display-container w3-padding-16">
+      <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
+      <h3 class="w3-wide"><b>FUTO FARMS</b></h3>
+    </div>
+  </a>
   <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
     <?php
     $c = count($menu);

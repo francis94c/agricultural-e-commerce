@@ -46,7 +46,7 @@ class Admin extends CI_Controller {
     $this->load->view("footer");
   }
   function isValidated() {
-    return $this->session->userdata('validated');
+    return $this->session->userdata('validated') && $this->session->userdata('admin');
   }
   function logout() {
     $this->session->sess_destroy();

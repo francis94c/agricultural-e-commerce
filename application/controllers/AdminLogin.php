@@ -9,7 +9,7 @@ class AdminLogin extends CI_Controller {
   }
   function process() {
     $this->load->model('authenticator');
-    $result = $this->authenticator->authenticate();
+    $result = $this->authenticator->authenticateAdmin();
     if(!$result) {
       $message = '<font color=red>Invalid Username or Password.</font><br />';
       $this->index($message);

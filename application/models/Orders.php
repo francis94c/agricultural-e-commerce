@@ -61,21 +61,31 @@ class Orders extends CI_Model {
    * @param  [type] $items [description]
    * @return [type]        [description]
    */
-  function createOrder($uid, $items) {
+  function createOrder($paid) {
     $this->load->helper("string");
     $orderFileName = random_string('alnum', 10);
     $totalPrice = 0;
+    $items = $this->session->userdata("cart");
     $this->load->model("stocks");
     for ($x = 0; $x < count($items); $x++) {
       $totalPrice += $this->stocks->calculateTotalPrice($items[$x]["id"], $items[$x]["quantity"]);
     }
     $data = array();
-    $data["user_id"] = $uid;
+    $data["user_id"] = $this->session->userdata("id");
     $data["items"] = $orderFileName;
     $data["total_price"] = $totalPrice;
+    $data["shipping_address"] = $this->session->userdata("shipping");
+    $data["additional_message"] = $this->session->userdata("message");
+    $data["status"] = $paid == true ? 1 : 0;
     if ($this->db->insert("orders", $data)) {
       $this->load->helper("file");
       write_file(FCPATH . "orders/" . $orderFileName, json_encode($items));
+      $this->db->where("id", $this->session->userdata("id"));
+      $this->db->update("users", array("shipping_address"=>$this->session->userdata("shipping")));
+      $this->session->unset_userdata("cart");
+      $this->session->unset_userdata("shipping");
+      $this->session->unset_userdata("message");
+      $this->session->unset_userdata("checking_out");
       return true;
     }
     return false;
@@ -122,7 +132,7 @@ class Orders extends CI_Model {
   }
   function getCustomerFullName($id) {
     $uid = $this->db->get_where("orders", array("id"=>$id))->result_array()[0]["user_id"];
-    $user = $this->db->get_where("users", array("id"=>$id))->result_array()[0];
+    $user = $this->db->get_where("users", array("id"=>$uid))->result_array()[0];
     return $user["first_name"] . " " . $user["last_name"] . " " . $user["middle_name"];
   }
 }

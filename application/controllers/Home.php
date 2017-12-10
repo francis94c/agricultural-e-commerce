@@ -159,8 +159,101 @@ class Home extends CI_Controller {
     $this->load->view("hidden_input", array("id"=>"item-ids", "name"=>"ids", "value"=>json_encode($ids)));
     $this->load->view("table_end");
     $this->load->view("scripts/cart");
-    $this->load->view("submit_checkout");
+    $this->load->view("submit_input", array("text"=>"Checkout"));
     $this->load->view("form_close");
+    $this->load->view("footer");
+  }
+  function checkout() {
+    if ($this->session->userdata("id") == null) {
+      $this->session->set_userdata("checking_out", true);
+      redirect("login");
+    } else {
+      $this->load->model("fields");
+      $data = array("menu" => $this->fields->getCategories());
+      $data["selected"] = 0;
+      $data["title"] = "Shipping Address";
+      $this->load->view("header", $data);
+      $this->load->view("form_open", array("url"=>"home/proceedToPay"));
+      $this->load->model("users");
+      $data["shipping"] = $this->users->getUserShippingAddress($this->session->userdata("id"));
+      $this->load->view("shipping_form", $data);
+      $this->load->view("submit_input", array("text"=>"Proceed To Pay"));
+      $this->load->view("form_close");
+      $this->load->view("footer");
+    }
+  }
+  function proceedToPay() {
+    $shipping = $this->security->xss_clean($this->input->post("shipping"));
+    $message = $this->security->xss_clean($this->input->post("message"));
+    if ($shipping != "") {
+      $this->session->set_userdata("shipping", $shipping);
+      $this->session->set_userdata("message", $message);
+      $this->load->model("fields");
+      $data = array("menu" => $this->fields->getCategories());
+      $data["selected"] = 0;
+      $data["title"] = "Pay (Credit Card)";
+      $this->load->view("header", $data);
+      $this->load->view("form_open", array("url"=>"home/pay"));
+      $this->load->view("pay_form");
+      $this->load->view("submit_input", array("text"=>"Pay"));
+      $this->load->view("form_close");
+      $this->load->view("footer");
+    } else {
+      $this->load->model("fields");
+      $data = array("menu" => $this->fields->getCategories());
+      $data["selected"] = 0;
+      $data["title"] = "Shipping Address";
+      $this->load->view("header", $data);
+      $this->load->view("message", array("text"=>"<font color=\"red\">No Shipping Address!</font>"));
+      $this->load->view("form_open", array("url"=>"home/proceedToPay"));
+      $this->load->model("users");
+      $data["shipping"] = $this->users->getUserShippingAddress($this->session->userdata("id"));
+      $this->load->view("shipping_form", $data);
+      $this->load->view("submit_input", array("text"=>"Proceed To Pay"));
+      $this->load->view("form_close");
+      $this->load->view("footer");
+    }
+  }
+  function pay() {
+    $cvv2 = $this->security->xss_clean($this->input->post("cvv2"));
+    $cardName = $this->security->xss_clean($this->input->post("card_name"));
+    $cardNumber = $this->security->xss_clean($this->input->post("card_number"));
+    $expiryDay = $this->security->xss_clean($this->input->post("expiry_day"));
+    $expiryYear = $this->security->xss_clean($this->input->post("expiry_year"));
+    $pin = $this->security->xss_clean($this->input->post("pin"));
+    if ($pin != "" && $cvv2 != "" && $cardName != "" && $expiryDay != "" &&
+    $expiryYear != "") {
+      $this->load->model("orders");
+      if ($this->orders->createOrder(true)) {
+        $this->load->model("fields");
+        $data = array("menu" => $this->fields->getCategories());
+        $data["selected"] = 0;
+        $data["title"] = "Pay (Credit Card)";
+        $this->load->view("header", $data);
+        $this->load->view("message", array("text"=>"<font color=\"green\">Payment Successful and Order Ceated.</font>"));
+        $this->load->view("footer");
+      } else {
+        $this->load->model("fields");
+        $data = array("menu" => $this->fields->getCategories());
+        $data["selected"] = 0;
+        $data["title"] = "Pay (Credit Card)";
+        $this->load->view("header", $data);
+        $this->load->view("message", array("text"=>"<font color=\"red\">Payment Successful but Order Creation Failed</font>"));
+        $this->load->view("footer");
+      }
+    } else {
+      $this->load->model("fields");
+      $data = array("menu" => $this->fields->getCategories());
+      $data["selected"] = 0;
+      $data["title"] = "Pay (Credit Card)";
+      $this->load->view("header", $data);
+      $this->load->view("message", array("text"=>"<font color=\"red\">Incorrect Payment Details</font>"));
+      $this->load->view("form_open", array("url"=>"home/pay"));
+      $this->load->view("pay_form");
+      $this->load->view("submit_input", array("text"=>"Pay"));
+      $this->load->view("form_close");
+      $this->load->view("footer");
+    }
   }
 }
 ?>
