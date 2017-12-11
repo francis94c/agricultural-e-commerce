@@ -89,7 +89,7 @@ class Home extends CI_Controller {
     }
     $this->load->view("footer");
     $navigation = $this->session->userdata("navigation") != null ?
-    $this->session->userdata("navigation") : array("search"=>"", "category"=>0);
+    $this->session->userdata("navigation") : array("search"=>"", "category"=>0, "index"=>0);
     $navigation["search"] = $keyWord;
     $this->session->set_userdata("navigation", $navigation);
   }
@@ -108,7 +108,7 @@ class Home extends CI_Controller {
     if ($navigation["search"] != "") {
       $this->searchStocks($navigation["search"]);
     } elseif ($navigation["category"] > 0) {
-      // load category
+      $this->fetchCategory($navigation["category"], $navigation["index"]);
     } else {
       $this->index();
     }
@@ -253,6 +253,63 @@ class Home extends CI_Controller {
       $this->load->view("submit_input", array("text"=>"Pay"));
       $this->load->view("form_close");
       $this->load->view("footer");
+    }
+  }
+  function fetchCategory() {
+    $cid = 0;
+    $index = 0;
+    if (func_num_args() > 0) {
+      $cid = func_get_arg(0);
+      $index = func_get_arg(1);
+    } else {
+      $cid = $this->uri->segment(3);
+      $index = $this->uri->segment(4);
+    }
+    if ($cid != 0) {
+      $this->load->model("stocks");
+      $this->load->model("fields");
+      $menu = $this->fields->getCategories();
+      $data = array("menu" => $menu);
+      $data["selected"] = $index;
+      $data["title"] = $menu[$index]["name"];
+      $stocks = $this->stocks->getStocksInCategory($cid);
+      $data["items"] = count($stocks);
+      $this->load->view("header", $data);
+      $pages = ceil(count($stocks) / 8);
+      $page = 1;
+      $lastIndex = 0;
+      while ($page <= $pages) {
+          $this->load->view("product_grid_header");
+          for($x = $lastIndex; $x < $lastIndex + 8; $x++) {
+            $stock = array();
+            if ($x < count($stocks)) {
+              $stock["image"] = base_url("images/" . $stocks[$x]["image"] . ".jpg");
+              $stock["name"] = $stocks[$x]["name"];
+              $stock["price"] = $stocks[$x]["unit_price"];
+              $stock["id"] = $stocks[$x]["id"];
+              $stock["quantity"] = $stocks[$x]["quantity"];
+              $stock["is_admin"] = false;
+              $this->load->view("product_array", $stock);
+            } else {
+              $this->load->view("product_grid_footer");
+              break;
+            }
+          }
+          if ($page != $pages) {
+            $this->load->view("product_grid_footer");
+          }
+          $lastIndex += 8;
+          ++$page;
+      }
+      $this->load->view("footer");
+      $navigation = $this->session->userdata("navigation") != null ?
+      $this->session->userdata("navigation") : array("search"=>"", "category"=>0);
+      $navigation["search"] = "";
+      $navigation["category"] = $cid;
+      $navigation["index"] = $index;
+      $this->session->set_userdata("navigation", $navigation);
+    } else {
+      $this->index();
     }
   }
 }

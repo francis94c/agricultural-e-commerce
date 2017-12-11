@@ -39,9 +39,9 @@ function toggleSearch() {
     $c = count($menu);
     for ($x = 0; $x <$c; $x++) {
       if ($selected == $x) {
-        echo "<a href=\"#\" class=\"w3-bar-item w3-gray w3-button\">" . $menu[$x]["name"] . "</a>";
+        echo "<a style=\"text-decoration:none;\" href=\"" . site_url("home/fetchCategory/" . $menu[$x]["id"] . "/$x") . "\" class=\"w3-bar-item w3-gray w3-button\">" . $menu[$x]["name"] . "</a>";
       } else {
-        echo "<a href=\"#\" class=\"w3-bar-item w3-button\">" . $menu[$x]["name"] . "</a>";
+        echo "<a style=\"text-decoration:none;\" href=\"" . site_url("home/fetchCategory/" . $menu[$x]["id"] . "/$x") . "\" class=\"w3-bar-item w3-button\">" . $menu[$x]["name"] . "</a>";
       }
     }
     ?>

@@ -4,7 +4,7 @@ class Stocks extends CI_Model {
     $this->db->order_by("name", "ASC");
     return $this->db->get("stock")->result_array();
   }
-  function getStocksByCategory($cid) {
+  function getStocksInCategory($cid) {
     $this->db->order_by("name", "ASC");
     return $this->db->get_where("stock", array("category" => $cid))->result_array();
   }
