@@ -312,5 +312,11 @@ class Home extends CI_Controller {
       $this->index();
     }
   }
+  function signOut() {
+    $this->session->unset_userdata("id");
+    $this->session->unset_userdata("validated");
+    $this->session->unset_userdata("admin");
+    $this->index();
+  }
 }
 ?>

@@ -23,6 +23,9 @@ function toggleSearch() {
     $("#actualSeachInput").focus();
   }
 }
+function dropDown() {
+  $("#dropdown-menu").toggle();
+}
 </script>
 <body class="w3-content" style="max-width:1200px">
 
@@ -75,15 +78,36 @@ function toggleSearch() {
     <?php echo form_close(); ?>
     <p class="w3-left"><?=$title?></p>
     <p class="w3-right">
-    <?php
-    $ci =& get_instance();
-    if ($ci->session->userdata("cart") == null) {
-    ?>
-      <a class="w3-button" href="#" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"></i></a>
-    <?php } else {?>
-      <a class="w3-button" href="<?=site_url("home/viewCart");?>" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"><span class="w3-badge w3-blue"><?=count($ci->session->userdata("cart"));?></span></i></a>
-    <?php }?>
-      <button onclick="toggleSearch();" class="w3-button"><i class="fa fa-search"></i></button>
+
+      <?php
+      $ci =& get_instance();
+      if ($ci->session->userdata("cart") == null) {
+      ?>
+        <a class="w3-button" href="#" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"></i></a>
+      <?php } else {?>
+        <a class="w3-button" href="<?=site_url("home/viewCart");?>" style="text-decoration:none;"><i class="fa fa-shopping-cart w3-margin-right"><span class="w3-badge w3-blue"><?=count($ci->session->userdata("cart"));?></span></i></a>
+      <?php }?>
+        <button onclick="toggleSearch();" class="w3-button"><i class="fa fa-search"></i></button>
+        <div class="w3-dropdown-click w3-right">
+          <button onclick="dropDown();" class="w3-button w3-white"><i class="fa fa-user"></i></button>
+          <div style="z-index:1;" id="dropdown-menu" class="w3-dropdown-content w3-bar-block w3-border">
+            <?php
+            $ci =& get_instance();
+            $ci->load->model("users");
+            $userName = "";
+            if ($this->session->userdata("id") != null) {
+              $userName = $ci->users->getUserName($this->session->userdata("id"));
+            }
+            ?>
+            <?php if ($userName != "") {?>
+              <a href="<?=site_url("login")?>" style="text-decoration:none;" class="w3-bar-item w3-button">My Orders</a>
+              <a href="#" style="text-decoration:none;" class="w3-bar-item w3-button"><?=$userName?></a>
+              <a href="<?=site_url("home/signOut")?>" style="text-decoration:none;" class="w3-bar-item w3-button">Sign Out</a>
+            <?php } else {?>
+              <a href="<?=site_url("login")?>" style="text-decoration:none;" class="w3-bar-item w3-button">Sign In</a>
+            <?php }?>
+          </div>
+        </div>
     </p>
   </header>
   <div class="w3-container w3-text-grey" id="jeans">
